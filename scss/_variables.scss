@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "Orbitron";
+    src: url(../multimedia/fonts/Orbitron-Black.ttf);
+}
+@font-face {
+    font-family: "Jura";
+    src: url(../multimedia/fonts/Jura-VariableFont_wght.ttf);
+}
+$font-jura: "Jura",'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;    
+$font-orbitron:'Orbitron','Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+$color-rojo:#c20000;
+$blanco:white;
+$blanco-transparente:rgba(255,255,255,0.8);
+$sombra:11px 11px 11px rgba(8,8,8,0.9);

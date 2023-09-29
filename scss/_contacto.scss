@@ -1,0 +1,125 @@
+.contacto {
+    background-image: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.2),
+            rgba(255, 255, 255, 1)
+        ),
+        url(../multimedia/img/call-center.jpg);
+    background-color: rgb(204, 204, 204, 1);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    // ocupar todo el espacio de main
+    width: 100%;
+    height: 100%;
+    
+    // 2 caras de contacto. header y form
+    
+    // para Extra y small devices ambas cara en columnas
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    
+
+    /*... desde Medium devices en adelante form a un costado */
+    @media only screen and (min-width: 768px) {
+        justify-content: center;
+        flex-direction: row;
+    }
+    
+    .contacto__item {
+        
+        // border: 1px solid red; /*debug*/
+
+        // centrar contenido
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-content: center;
+
+        // ocupar todo el espacio en movil
+        width: 100%;
+        // height: 100%;
+
+        //.. resto dimensiones, ocupar mitad
+        // desde Medium en adelante devices (landscape tablets, 768px and up)
+        @media only screen and (min-width: 768px) {
+            width: 50%;
+        }
+    }
+
+    .contacto__img_box {
+        padding: 2rem;
+    }
+
+    .contacto__form {
+        font-family: $font-jura;
+        
+        // espacio alrededor de form
+        padding: 1rem;
+        text-align: justify;
+
+        //centrar form horizontal y vertical
+        display: flex;
+        justify-content: flex-start;
+        align-content: center;
+
+        
+        form {
+            // border: 3px solid black; //debug            
+            width: 100%;
+
+            display: flex;            
+            gap: 1.5rem;
+
+            
+            flex-direction: column;
+
+            /* Extra large devices (large laptops and desktops, 1200px and up) */
+            @media only screen and (min-width: 1200px) {
+                flex-wrap: wrap;
+                width: 90%;
+            }
+
+            .contacto__linea {
+                //relativo a form. todo ancho de form
+                flex-grow: 1;
+
+                //border: 3px dotted black;//debug
+                display: flex;
+                gap: 1.5rem;
+                justify-content: space-between;
+
+                flex-wrap: wrap;
+                flex-direction: column;
+                @media only screen and (min-width: 1200px) {
+                    flex-wrap: nowrap;
+                    flex-direction: row;
+                }
+            }
+
+            .contacto__linea_control {
+                box-sizing: border-box;
+                //border: 1px solid red;//debug
+                flex-grow: 1;                
+            }
+
+            .contacto__linea_control_input {
+                font-size: 1.3rem;
+                padding: 0.5rem 1rem;
+                @media only screen and (min-width: 600px) {
+                    font-size: 1.8rem;
+                }
+                font-family: $font-jura;
+                width: 100%;
+                box-sizing: border-box;
+                border-radius: 10px;
+            }
+            textarea.contacto__linea_control_input {
+                min-height: 5rem;
+            }
+        }
+    }
+}

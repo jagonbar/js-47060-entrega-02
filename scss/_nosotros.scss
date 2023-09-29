@@ -1,0 +1,48 @@
+.nosotros {
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+    h1 {
+        background: rgb(1, 12, 46);
+        background: linear-gradient(
+            45deg,
+            rgba(1, 12, 46, 0.5) 25%,
+            rgba(160, 0, 209, 0.5) 100%
+        );
+    }
+}
+.nosotros__img_box {
+    background-image: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.2),
+            rgba(255, 255, 255, 1)
+        ),
+        url(../multimedia/img/nosotros.jpg);
+    background-color: rgb(204, 204, 204, 1);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: inherit;
+
+    font-family: $font-orbitron;
+    font-size: 2rem;
+    padding: 5%;
+}
+
+.nosotros__text {
+    font-family: $font-jura;
+    background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.8),
+            rgba(194, 0, 0, 0.7)
+        ),
+        url(../multimedia/img/perifericos-rojos.png);
+    background-color: rgb(204, 204, 204, 1);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    padding: 2rem;
+    font-size: 1.5rem;
+    text-align: justify;
+}

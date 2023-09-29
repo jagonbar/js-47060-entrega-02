@@ -1,0 +1,39 @@
+footer {
+    font-family     : $font-jura;    
+    @media only screen and (max-width: 600px) {
+        font-size: 15px;
+    }
+    @media only screen and (min-width: 600px) {
+        font-size: 20px;
+    }
+    @media only screen and (min-width: 768px) {
+    }
+    @media only screen and (min-width: 992px) {
+    }
+    @media only screen and (min-width: 1200px){
+    }
+    background-color: black;
+    color: #ccc;
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: stretch;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    flex-direction: column;
+    .footer-child{
+        padding: 10px;
+        width: 100%;
+    }
+    .footer-links {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: stretch;
+        align-content: flex-start;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+    .footer-end{
+        text-align: center;
+    }
+}
