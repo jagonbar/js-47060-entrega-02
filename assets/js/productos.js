@@ -4,7 +4,7 @@ const productos = [
         "titulo": "Mario 3D",
         "imagen": "../multimedia/img/game_mario.jpg",
         "precio": "69.990",
-        "descripcion": "¡Araña y trepa a través de docenas de coloridos niveles! Multiplica la diversión al formar un equipo o compitiendo con tus amigos mediante el juego local* o en línea** para alcanzar el objetivo de cada etapa."
+        "descripcion": "Juego de mario increible"
     },
     {
         "id": 2,

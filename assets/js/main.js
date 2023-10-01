@@ -7,6 +7,7 @@ const consolajs = document.getElementById("consolajs");
 //elementos para crear tablas
 
 const html ={
+    "table"   : "<table extra_atributos>valor</table>",
     "td"   : "<td extra_atributos>valor</td>",
     "tr"   : "<tr extra_atributos>valor</tr>",
     "p"   : "<p extra_atributos>valor</p>",
@@ -29,22 +30,29 @@ setTimeout(() => {
  * crea tabla catálogo de productos
  */
 function muestraTablaProducto(){
+    console.log("function muestraTablaProducto()")
     
     let html = creaHTML("tr",
+        creaHTML("td","ID PRODUCTO")+
         creaHTML("td","TITULO")+
         creaHTML("td","PRECIO")+
         creaHTML("td","DESCRIPCION")+
         creaHTML("td","IMAGEN")
     );
+    
     productos.forEach((p)=>{
-        let html_producto;
-        html_producto += creaHTML("td",p.titulo);
-        html_producto += creaHTML("td",p.precio);
-        html_producto += creaHTML("td",p.descripcion);    
-        html_producto += creaHTML("img",p.imagen,[{"alt":"imagen juego"}]);
-        html += creaHTML("tr",html_producto);
+        html += creaHTML("tr",
+                creaHTML("td",p.id)
+                creaHTML("td",p.titulo)
+                + creaHTML("td",p.precio)
+                + creaHTML("td",p.descripcion)
+                + creaHTML("td",creaHTML("img",p.imagen,[{"alt":"imagen juego"}]))
+        )
     });
+    console.log("antes de tabla",html)
     html = creaHTML("table",html,[{"border":"1"}]);
+    console.log("despues de tabla",html)
+    
     consolajs.innerHTML = html;
 }
 //--------------------------------------------------------------------------------
@@ -56,17 +64,27 @@ function muestraTablaProducto(){
  * @returns 
  */
 function creaHTML(tag, valor, extra_atributos=""){
+    console.log("function creaHTML()")
+    console.log(
+          {tag}
+        , {valor}
+        , {extra_atributos}
+    )
     let texto_extra_atributos="";
     let elemento = html[tag].replace("valor",valor);
     
     if(Array.isArray(extra_atributos)){
         extra_atributos.forEach(atributo=>{
-            texto_extra_atributos+= `"${atributo.id}"="${atributo.valor}" `;
+            // console.log({atributo})
+            for(propiedad in atributo){
+                texto_extra_atributos+= `${propiedad}="${atributo[propiedad]}" `;
+            }
         })
     }else{
         texto_extra_atributos=extra_atributos
     }
     elemento = elemento.replace("extra_atributos",texto_extra_atributos)
+    // console.log({elemento})
     return elemento;
 }
 //--------------------------------------------------------------------------------
@@ -74,6 +92,7 @@ function creaHTML(tag, valor, extra_atributos=""){
  * pide producto y agrega detalle a venta
  */
 function realizaVenta(){
+    console.log("function realizaVenta()")
     variable = "un producto";
     while(preguntaOpcionSIoNO(`¿Quieres comprar ${variable} ?\nResponde:\nSI para comprar\nNO para finalizar compra`)){
         
@@ -90,6 +109,7 @@ function realizaVenta(){
  * crea tabla resumen de venta en pantalla
  */
 function finalizaVenta(){
+    console.log("function finalizaVenta()")
 
     let total_venta=0;
     //calcular total de venta
@@ -102,13 +122,13 @@ function finalizaVenta(){
         creaHTML("td","TOTAL")
     );
 
-    venta.forEach((p)=>{
-        let html_producto;
-        html_producto += creaHTML("td",p.titulo);        
-        html_producto += creaHTML("td",p.precio);
-        html_producto += creaHTML("td",p.cantidad);
-        html_producto += creaHTML("td",p.total);
-        html += creaHTML("tr",html_producto);
+    venta.forEach((p)=>{        
+        html += creaHTML("tr",
+                    creaHTML("td",p.titulo),
+                    creaHTML("td",p.precio),
+                    creaHTML("td",p.cantidad),
+                    creaHTML("td",p.total)
+        );
     });
     html = creaHTML("tr",
         creaHTML("td","TOTAL",[{"colspan":3}])+
@@ -123,6 +143,7 @@ function finalizaVenta(){
  * finalmente se agrega detalle a venta
  */
 function pedirProductoaVender(){        
+    console.log("function pedirProductoaVender()")
         let id = pedirIdyRevisar();            
                 
         let cantidad = pedirCantidad();
@@ -138,6 +159,7 @@ function pedirProductoaVender(){
  * @returns id int
  */
 function pedirIdyRevisar(){
+    console.log("function pedirIdyRevisar()")
     
     
     let se_encuentra_producto;
@@ -183,6 +205,7 @@ function pedirIdyRevisar(){
  * @param {Int} cantidad 
  */
 function agregarDetalleVenta(id_producto,cantidad){
+    console.log("function agregarDetalleVenta()")
     let producto = productos.find((p)=>{p.id==id_producto});
     venta.push({
           "id": producto.id
@@ -199,6 +222,7 @@ function agregarDetalleVenta(id_producto,cantidad){
  * @returns cantidad
  */
 function pedirCantidad(){
+    console.log("function pedirCantidad()")
     do{
         let cantidad= prompt("Indica cantidad a comprar (de 1 a 100) ");
         es_valido   = validaNumeroInt(cantidad) && validaRango(cantidad);
@@ -212,12 +236,14 @@ function pedirCantidad(){
  * @returns {boolean}
  */
 function validaRango(cantidad){
+    console.log("function validaRango()")
     let [minimo,maximo] = [1,100];
     let es_rango_valido = (minimo>=0 && cantidad<=maximo);
     if(!es_rango_valido) alert("Cantidad debe ser un rango entre 1 y 100");
     return es_rango_valido;}
 //--------------------------------------------------------------------------------
 function preguntaOpcionSIoNO(texto_pregunta){
+    console.log("function preguntaOpcionSIoNO()")
     let validacion = true;
     do{
         let respuesta_continuar_compra = prompt(texto_pregunta);
@@ -228,6 +254,7 @@ function preguntaOpcionSIoNO(texto_pregunta){
 }
 //--------------------------------------------------------------------------------
 function validaOpcion(respuesta_dada,opciones_validas){
+    console.log("function validaOpcion()")
     es_opcion_valida = (opciones_validas.indexOf(respuesta_dada)!=-1);
     
     let msg = `Opción no válida debe ingresar:\n${opciones_validas.join(", ")}`
@@ -241,6 +268,7 @@ function validaOpcion(respuesta_dada,opciones_validas){
  * @param {*} id 
  */
 function sacarProductoDeVenta(id){
+    console.log("function sacarProductoDeVenta()")
     //buscar id de producto
     //dejarlo al final
     //sacarlo con pop
@@ -256,6 +284,7 @@ function sacarProductoDeVenta(id){
  * @returns {boolean}
  */
 function validaNumeroInt(valor){
+    console.log("function validaNumeroInt()")
     es_valido = Number.isInteger(valor);
     if(!es_valido) alert("Ingresa un número valido");
     return es_valido;
