@@ -43,7 +43,7 @@ function muestraTablaProducto(){
     productos.forEach((p)=>{
         html += creaHTML("tr",
                 creaHTML("td",p.id)
-                creaHTML("td",p.titulo)
+                + creaHTML("td",p.titulo)
                 + creaHTML("td",p.precio)
                 + creaHTML("td",p.descripcion)
                 + creaHTML("td",creaHTML("img",p.imagen,[{"alt":"imagen juego"}]))
