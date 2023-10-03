@@ -1,0 +1,53 @@
+.divAcciones{
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    
+
+    .btnVenta{
+        padding: 1rem;
+        font-size: 1.5rem;
+        font-family: $font-jura;    
+        box-sizing: border-box;
+        border-radius: 10px;
+    }
+}
+.tableCatalogo{
+    background-color: white;
+    width: 80%;
+    tr th{
+        border: 1px solid gray;
+    }
+    .thIDPRODUCTO{
+        width: 1%;
+    }
+    .thTITULO{
+
+    }
+    .thPRECIO{
+        width: 1%;
+    }
+    .thDESCRIPCION{
+
+    }
+    .thIMAGEN img{
+        width: 100px;
+    }
+    tr td img{
+        width: 100px;       
+    }
+    .tdIDPRODUCTO{
+        width: 1%;
+        font-size: 2rem;
+        text-align: center;
+    }
+}
+#consolajs{
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

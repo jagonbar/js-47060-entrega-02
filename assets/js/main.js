@@ -1,14 +1,17 @@
 //--------------------------------------------------------------------------------
+//INICIO
 // globales
 
 //div para mostrar tablas
 const consolajs = document.getElementById("consolajs");
+const titulo1   = document.getElementById("titulo1");
+const titulo2   = document.getElementById("titulo2");
 
 //elementos para crear tablas
-
 const html ={
     "table"   : "<table extra_atributos>valor</table>",
     "td"   : "<td extra_atributos>valor</td>",
+    "th"   : "<th extra_atributos>valor</th>",
     "tr"   : "<tr extra_atributos>valor</tr>",
     "p"   : "<p extra_atributos>valor</p>",
     "img"  : "<img src=\"valor\" extra_atributos/>",
@@ -19,12 +22,6 @@ const venta = []
 
 //muestra tabla catálogo de productos
 muestraTablaProducto();
-
-//espera la carga de catálogo y empieza la venta
-setTimeout(() => {
-    
-        realizaVenta();
-    }, 4000);
 //--------------------------------------------------------------------------------
 /**
  * crea tabla catálogo de productos
@@ -33,16 +30,16 @@ function muestraTablaProducto(){
     console.log("function muestraTablaProducto()")
     
     let html = creaHTML("tr",
-        creaHTML("td","ID PRODUCTO")+
-        creaHTML("td","TITULO")+
-        creaHTML("td","PRECIO")+
-        creaHTML("td","DESCRIPCION")+
-        creaHTML("td","IMAGEN")
+        creaHTML("th","ID PRODUCTO",[{"class":"thIDPRODUCTO"}])+
+        creaHTML("th","TITULO"     ,[{"class":"thTITULO"}])+
+        creaHTML("th","PRECIO"     ,[{"class":"thPRECIO"}])+
+        creaHTML("th","DESCRIPCION",[{"class":"thDESCRIPCION"}])+
+        creaHTML("th","IMAGEN"     ,[{"class":"thIMAGEN"}])
     );
     
     productos.forEach((p)=>{
         html += creaHTML("tr",
-                creaHTML("td",p.id)
+                creaHTML("td",p.id,[{"class":"tdIDPRODUCTO"}])
                 + creaHTML("td",p.titulo)
                 + creaHTML("td",p.precio)
                 + creaHTML("td",p.descripcion)
@@ -50,7 +47,7 @@ function muestraTablaProducto(){
         )
     });
     console.log("antes de tabla",html)
-    html = creaHTML("table",html,[{"border":"1"}]);
+    html = creaHTML("table",html,[{"class":"tableCatalogo"},{"border":"1"}]);
     console.log("despues de tabla",html)
     
     consolajs.innerHTML = html;
@@ -94,15 +91,24 @@ function creaHTML(tag, valor, extra_atributos=""){
 function realizaVenta(){
     console.log("function realizaVenta()")
     variable = "un producto";
-    while(preguntaOpcionSIoNO(`¿Quieres comprar ${variable} ?\nResponde:\nSI para comprar\nNO para finalizar compra`)){
+    while(preguntaOpcionSIoNO(`¿Quieres comprar ${variable} ?\nResponde:\nSI para comprar\nNO seguir viendo catalogo`)){
+        let respuesta;
+        respuesta = pedirProductoaVender();
+        if(respuesta==false) {
+            console.log("cancela comprar en id");
+            break
+        };
+        //pasa validacion y recibe datos
+        let {id,cantidad}= respuesta;
         
-        let {id,cantidad} = pedirProductoaVender();
-        
-        agregarDetalleVenta(id, cantidad);
-        
+        respuesta = agregarDetalleVenta(id, cantidad);
+        if(respuesta==false) {
+            console.log("cancela comprar en cantidad")
+            break
+        };
+
         variable = "otro producto más";
-    }
-    finalizaVenta()
+    }    
 }
 //--------------------------------------------------------------------------------
 /**
@@ -111,30 +117,39 @@ function realizaVenta(){
 function finalizaVenta(){
     console.log("function finalizaVenta()")
 
+    //ordernar items por título
+    venta.sort((a,b)=>{
+        return (a.titulo.toUpperCase()>b.titulo.toUpperCase())?1:-1;
+    })
+
     let total_venta=0;
     //calcular total de venta
     total_venta =venta.reduce((total_venta, producto)=>total_venta+producto.total, 0);
     //crear html tabla resumen venta
     let html = creaHTML("tr",
-        creaHTML("td","TITULO")+
-        creaHTML("td","PRECIO")+
-        creaHTML("td","CANTIDAD")+
-        creaHTML("td","TOTAL")
+        creaHTML("th","TITULO")+
+        creaHTML("th","PRECIO")+
+        creaHTML("th","CANTIDAD")+
+        creaHTML("th","TOTAL")
     );
 
     venta.forEach((p)=>{        
         html += creaHTML("tr",
-                    creaHTML("td",p.titulo),
-                    creaHTML("td",p.precio),
-                    creaHTML("td",p.cantidad),
+                    creaHTML("td",p.titulo)+
+                    creaHTML("td",p.precio)+
+                    creaHTML("td",p.cantidad)+
                     creaHTML("td",p.total)
         );
     });
-    html = creaHTML("tr",
+    html += creaHTML("tr",
         creaHTML("td","TOTAL",[{"colspan":3}])+
         creaHTML("td",total_venta)        
     );
-    html = creaHTML("table",html,[{"border":"1"}]);
+    html = creaHTML("table",html,[{"class":"tableCatalogo"},{"border":"1"}]);
+
+    titulo1.innerHTML="Detalle final de la venta"
+    titulo2.innerHTML=""
+
     consolajs.innerHTML = html; 
 }
 //--------------------------------------------------------------------------------
@@ -145,8 +160,12 @@ function finalizaVenta(){
 function pedirProductoaVender(){        
     console.log("function pedirProductoaVender()")
         let id = pedirIdyRevisar();            
-                
+        if(id==false)return false; //canceló prompt
+
         let cantidad = pedirCantidad();
+        if (cantidad==false) return false; //canceló prompt
+        
+        //pasó OK, se retorna datos
         return {id,cantidad}                         
 }
 //--------------------------------------------------------------------------------
@@ -161,7 +180,7 @@ function pedirProductoaVender(){
 function pedirIdyRevisar(){
     console.log("function pedirIdyRevisar()")
     
-    
+    let id;
     let se_encuentra_producto;
     let se_encuentra_en_venta;
 
@@ -171,32 +190,69 @@ function pedirIdyRevisar(){
         //---------------------------------
         /* Pedir ID de producto*/
         let msg = `Ingresar id de producto:`
-        let id = prompt(msg);
+        id = prompt(msg);
         
-        //Revisar que se encuentre producto        
-        se_encuentra_producto= (productos.indexOf(id)!=-1)
+        if(id===null){      
+            console.log("canceló prompt");
+            return false; //canceló prompt
+        }
+        if(!validaNumeroInt(id) ){
+            alert("Debe ingresar un número.");
+            continue;
+        }
+        id = parseInt(id);
+
+        //Revisar que se encuentre producto
+        se_encuentra_producto= (   (productos.findIndex(producto=>producto.id===id))!==-1 );
 
         //si no se encuentra cortar ciclo y pedir ID otra vez
         if(!se_encuentra_producto){
+            console.log("no se encuentra en producto en catalogo")
             msg=`Debe ingresar un id de la lista  de productos`;
             alert(msg)
             continue;
         }
         
+        console.log("se encontró producto");
+        
         //revisar si se encuentra ya el producto pedido en la venta
         // si está preguntar si se reemplaza o pedir otro id
-        se_encuentra_en_venta= (venta.indexOf(id) != -1);
+        
+        se_encuentra_en_venta = (venta.findIndex(item => item.id === id)!==-1);
         if(se_encuentra_en_venta){
+            console.log("se encuentra en venta")
+            let producto_venta = venta.find(item => item.id === id);
             msg=`El producto ya se encuentra agregado a la venta\n
-            ¿Quieres reemplazar el producto?`;
+            ¿Quieres modificar cantidad de ${producto_venta.cantidad} a vender del producto?\nResponde SI o NO`;
             if(preguntaOpcionSIoNO(msg)){
                 sacarProductoDeVenta(id);
-            }
-            continue;
+            }            
         }
+        
         sigue_preguntando=false;
+        break;
     }while(sigue_preguntando)
+
     return id;
+}
+//--------------------------------------------------------------------------------
+/**
+ * clase de producto
+ */
+class productoClass{
+    constructor(
+        id
+        , titulo
+        , precio
+        , cantidad
+        , total
+    ){
+        this.id       = id
+        this.titulo   = titulo
+        this.precio   = precio
+        this.cantidad = cantidad
+        this.total    = total
+    }
 }
 //--------------------------------------------------------------------------------
 /**
@@ -206,14 +262,26 @@ function pedirIdyRevisar(){
  */
 function agregarDetalleVenta(id_producto,cantidad){
     console.log("function agregarDetalleVenta()")
-    let producto = productos.find((p)=>{p.id==id_producto});
-    venta.push({
-          "id": producto.id
-        , "titulo": producto.titulo
-        , "precio": producto.precio
-        , cantidad
-        , "total" : cantidad*producto.precio
-    });
+    console.log({id_producto})
+    console.log({cantidad})
+    let producto = productos.find((p)=>{return p.id==id_producto});
+    venta.push(
+        new productoClass(
+             producto.id
+            , producto.titulo
+            , producto.precio
+            ,cantidad
+            ,cantidad*producto.precio
+        )
+    );
+    console.log({venta});
+    // venta.push({
+    //       "id": producto.id
+    //     , "titulo": producto.titulo
+    //     , "precio": producto.precio
+    //     , cantidad
+    //     , "total" : cantidad*producto.precio
+    // });
 }
 //--------------------------------------------------------------------------------
 /**
@@ -223,11 +291,18 @@ function agregarDetalleVenta(id_producto,cantidad){
  */
 function pedirCantidad(){
     console.log("function pedirCantidad()")
+    let cantidad;
     do{
-        let cantidad= prompt("Indica cantidad a comprar (de 1 a 100) ");
+        cantidad= prompt("Indica cantidad a comprar (de 1 a 100) ");
+        
+        if(cantidad===null) {
+            console.log("canceló prompt");
+            return false;
+        }//canceló prompt
+
         es_valido   = validaNumeroInt(cantidad) && validaRango(cantidad);
     }while(!es_valido)
-    return cantidad;
+    return parseInt(cantidad);
 }
 //--------------------------------------------------------------------------------
 /**
@@ -237,27 +312,59 @@ function pedirCantidad(){
  */
 function validaRango(cantidad){
     console.log("function validaRango()")
-    let [minimo,maximo] = [1,100];
+    let minimo = 1;
+    let maximo = 100;
     let es_rango_valido = (minimo>=0 && cantidad<=maximo);
     if(!es_rango_valido) alert("Cantidad debe ser un rango entre 1 y 100");
     return es_rango_valido;}
 //--------------------------------------------------------------------------------
+/**
+ * retorna true si persona indica SI
+ * @param {string} texto_pregunta mensaje a enviar a usuario
+ * @returns {boolean}
+ */
 function preguntaOpcionSIoNO(texto_pregunta){
     console.log("function preguntaOpcionSIoNO()")
+    let respuesta_continuar_compra
     let validacion = true;
     do{
-        let respuesta_continuar_compra = prompt(texto_pregunta);
-        validacion = validaOpcion(respuesta_continuar_compra,[{"opcion":"SI","valor":true},{"opcion":"NO","valor":false}]);
-    }while(validacion);
+        respuesta_continuar_compra = prompt(texto_pregunta);
+        if(respuesta_continuar_compra===null){
+            console.log("canceló prompt")
+            return false
+        }
+        
+        respuesta_continuar_compra = respuesta_continuar_compra.toUpperCase().replace("í","I").replace("Í","I");
+        validacion = validaOpcion(respuesta_continuar_compra,["SI","NO"]);
+    }while(!validacion);
+
+    console.log("pasó validacion")
     
     return (respuesta_continuar_compra=="SI");
 }
 //--------------------------------------------------------------------------------
+/**
+ * valida respuesta contra valores de arreglo de opciones
+ * @param {string} respuesta_dada 
+ * @param {array} opciones_validas arreglo de opciones validas
+ * @returns 
+ */
 function validaOpcion(respuesta_dada,opciones_validas){
     console.log("function validaOpcion()")
-    es_opcion_valida = (opciones_validas.indexOf(respuesta_dada)!=-1);
+    // console.log({arguments})
+    console.log({respuesta_dada})
     
-    let msg = `Opción no válida debe ingresar:\n${opciones_validas.join(", ")}`
+    let txt_opciones_validas = opciones_validas.join(", ");
+    let msg = `Opción no válida debe ingresar:\n${txt_opciones_validas}`
+
+    if(respuesta_dada===undefined) {
+        alert(msg);
+        return false
+    };
+
+    let es_opcion_valida     = (opciones_validas.indexOf(respuesta_dada.toUpperCase())!=-1)
+    
+    console.log({es_opcion_valida})
 
     if(!es_opcion_valida) alert(msg);
     return es_opcion_valida
@@ -272,10 +379,11 @@ function sacarProductoDeVenta(id){
     //buscar id de producto
     //dejarlo al final
     //sacarlo con pop
-    venta.sort((producto)=>{
-        return (producto.id==id)?1:0;            
-    });
-    venta.pop()
+    const indice = venta.findIndex(item => item.id === id);
+
+    if (indice !== -1) {
+        venta.splice(indice, 1);
+    }
 }
 //--------------------------------------------------------------------------------
 /**
@@ -285,20 +393,10 @@ function sacarProductoDeVenta(id){
  */
 function validaNumeroInt(valor){
     console.log("function validaNumeroInt()")
-    es_valido = Number.isInteger(valor);
+    es_entero = (parseInt(valor) ===parseFloat(valor))
+
+    es_valido = (valor!==null) && (valor!==undefined) && ( !isNaN(valor) ) && es_entero;
     if(!es_valido) alert("Ingresa un número valido");
     return es_valido;
 }
-
-
 //--------------------------------------------------------------------------------
-
-// prompt("Indica id de producto a comprar")
-//     //no encuentra
-//     "indica un id de la tabla.\nEl id id no tiene producto asociado"
-//     pregunta_reemplazar = prompt("el producto ya se encuentra agregado,¿Quieres reemplazarlo?")
-//     //si    
-//     prompt("cantidad")
-//     alert("cantidad:c | precio:p | total:t\n\nMonto total venta hasta el momento:venta")
-//     //no
-// continuar_compra = prompt("¿Quieres comprar otro?\nResponde:\nSI para comprar\nNO para finalizar compra");

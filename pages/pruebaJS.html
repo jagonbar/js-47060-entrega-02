@@ -43,9 +43,22 @@
         </header>
         <!-- -------------------------------------------------------- -->
         <main>
-            <h1>Elige los productos a comprar</h1>
-            <h2>Indica id del que necesitas y cantidad</h2>
-            
+            <h1 id="titulo1">Elige los productos a comprar</h1>
+            <h2 id="titulo2">Indica id del que necesitas y cantidad</h2>
+            <div class="divAcciones">
+                <label for="btnRealizarVenta">
+                    <button class="btnVenta" id="btnRealizarVenta" name="btnRealizarVenta" onclick="realizaVenta()">
+                        <i class="fa fa-cart-plus" aria-hidden="true"></i>                        
+                        Realizar Venta
+                    </button>
+                    
+                    <button class="btnVenta" id="btnFinalizarVenta" name="btnFinalizarVenta" onclick="finalizaVenta()">
+                        <i class="fa fa-money" aria-hidden="true"></i>
+                        Finalizar Venta
+                    </button>
+                    
+                </label>
+            </div>
             <div id="consolajs" style="margin: 0 auto;">
             </div>
 
